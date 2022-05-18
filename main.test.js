@@ -11,16 +11,43 @@ describe('Express Route Test', function () {
 	 		});
 	 })
 
+     it('register', async () => {
+		return request
+        .post('/register')
+        .send({username: 'user1', password: "user1pass" })
+        .expect('Content-Type', /json/)
+        .expect(200).then(res => {
+            expect(res.body).toEqual(
+                expect.objectContaining({
+                    message: expect.any(String),
+                })
+            );
+        });
+	});
+
+    it('register failed', async () => {
+		return request
+		.post('/register')
+		.send({username: 'user1', password: "user1pass" })
+		.expect('Content-Type', /json/)
+		.expect(401).then(res => {
+			expect(res.body).toEqual(
+				expect.objectContaining({
+                    message: expect.any(String),
+				})
+			);
+		});
+	})
+
 	it('login successfully', async () => {
 		return request
 			.post('/login')
-			.send({username: 'user1', password: "123456" })
+			.send({username: 'user1', password: "user1pass" })
 			.expect('Content-Type', /json/)
-			.expect(200).then(response => {
-				expect(response.body).toEqual(
+			.expect(200).then(res => {
+				expect(res.body).toEqual(
 					expect.objectContaining({
-						 _id: expect.stringMatching(""),
-						 name: expect.stringMatching("user1"),
+						message: expect.any(String),
 					})
 				);
 			});
@@ -29,42 +56,14 @@ describe('Express Route Test', function () {
 	it('login failed', async () => {
 		return request
 			.post('/login')
-			.send({username: 'FKEKK', password: "123456ABBA" })
+			.send({username: 'user1', password: "123456ABBA" })
 			.expect('Content-Type', /json/)
-			.expect(200).then(response => {
-				expect(response.body).toEqual(
+			.expect(401).then(res => {
+				expect(res.body).toEqual(
 					expect.objectContaining({
-						 error: expect.any(String),
+                        message: expect.any(String),
 					})
 				);
 			});
 	});
-
-	it('register', async () => {
-		return request
-			.post('/register')
-			.send({username: 'user1', password: "123456" })
-			.expect('Content-Type', /json/)
-			.expect(200).then(response => {
-				expect(response.body).toEqual(
-					expect.objectContaining({
-						 message: expect.any(String),
-					})
-				);
-			});
-	});
-
-	it('register failed', async () => {
-		return request
-		.post('/register')
-		.send({username: 'user1', password: "123456" })
-		.expect('Content-Type', /json/)
-		.expect(404).then(response => {
-			expect(response.body).toEqual(
-				expect.objectContaining({
-					 error: expect.any(String),
-				})
-			);
-		});
-	})
 });

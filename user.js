@@ -1,47 +1,46 @@
 const bcrypt = require("bcrypt");
-let users;
+let db;
 
 class User {
 	static async injectDB(conn) {
-		users = await conn.db("my-database-name").collection("users")
+		db = await conn.db("Week08").collection("users")
 	}
 
-	static async register(username, password, phone) {
+	static async register(username, password) {
 		// TODO: Check if username exists
-		let usersearch = await users.find({ username: username }).toArray()
-		    if (usersearch.length > 0) {
+		let find = await db.find({ username: username }).toArray()
+		    if (find.length > 0) {
 			    const message = "User can login now "
-			    return
+			    return null
 		    } else {
-		
-		// TODO: Hash password
-		    let Hashpass = await bcrypt.hash(userData.password, 15);
-		    userData.password = Hashpass;
-		
-		// TODO: Save user to database
-		    await users.insertOne({ username: username, password: password });
+            // TODO: Hash password
+                let Hashpass = await bcrypt.hash(password, 10);
+                password = Hashpass;
+            
+            // TODO: Save user to database
+                await db.insertOne({ username: username, password: password });   
+                
 		}
-		return users.find({ username: username }).toArray();
+        return await db.find({ username: username }).toArray();
+		
 	}
 
 	static async login(username, password) {
 		// TODO: Check if username exists
-		let search = await users.find({ username: username }).toArray();
-			if (search.length == 0) {
-				return
+		let find = await db.find({ username: username }).toArray();
+			if (find.length == 0) {
+				return false
 			}
 
 		// TODO: Validate password
-		let key = await bcrypt.compare(password, search[0].password)
+		let pass = await bcrypt.compare(password, find[0].password);
 
 		// TODO: Return user object
-		if (key) {
-			return search
+		if (pass) {
+			return pass
 		} else {
-			return {
-				key: false
-			};
-		}
+			return false
+        }
 	}
 }
 

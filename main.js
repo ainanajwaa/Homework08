@@ -32,17 +32,16 @@ app.post('/login', async (req, res) => {
 	console.log(req.body);
 
 	const user = await User.login(req.body.username, req.body.password);
-	if (user != null){
+	if (user != false){
 		console.log("Login successful");
 		res.status(200).json({
-			_id: user[0]._id,
-			username: user[0].username,
+			message: "Login successful",
 		})
 	}
 	else{
 		console.log("Error occured. Login failed")
 		res.status(401).json({
-			error: "Invalid username or password"
+			message: "Invalid username or password"
 		})
 	}
 })
@@ -50,7 +49,7 @@ app.post('/login', async (req, res) => {
 app.post('/register', async (req, res) => {
 	console.log(req.body);
 
-	const user = await User.login(req.body.username, req.body.password);	
+	const user = await User.register(req.body.username, req.body.password);	
 	if (user != null){
 		console.log("Register successful");
 		res.status(200).json({
@@ -59,8 +58,8 @@ app.post('/register', async (req, res) => {
 	}
 	else{
 		console.log("Register failed")
-		res.status(404).json({
-			error: "Username you entered already exists."
+		res.status(401).json({
+			message: "Username you entered already exists."
 		})
 	}
 })
